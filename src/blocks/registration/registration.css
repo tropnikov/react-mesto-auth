@@ -24,9 +24,12 @@
   background: #ffffff;
   border-radius: 2px;
   text-align: center;
-
+  margin-top: 0;
   color: #000000;
   margin-bottom: 15px;
+}
+.registration__submit:hover {
+  opacity: 0.85;
 }
 
 .form__input_type_register {
@@ -48,9 +51,9 @@
   font-size: 14px;
   line-height: 17px;
   /* identical to box height */
-
+  margin: 0;
   text-align: center;
-
+  margin-bottom: 84px;
   color: #ffffff;
 }
 
@@ -85,9 +88,12 @@
   background: #ffffff;
   border-radius: 2px;
   text-align: center;
-
+  margin-top: 0;
   color: #000000;
-  margin-bottom: 15px;
+  margin-bottom: 116px;
+}
+.login__submit:hover {
+  opacity: 0.85;
 }
 
 .form__input_type_login {
@@ -101,4 +107,60 @@
 }
 .form__password {
   margin-bottom: 216px;
+}
+.popup__registration-image-status {
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 32px;
+}
+.popup__container_type_tooltip {
+  padding: 60px 36px;
+}
+.popup__title_type_tooltip {
+  text-align: center;
+  margin: 0 auto;
+}
+
+.header__user {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  font-family: "Inter", Helvetica, Arial, sans-serif;
+  font-style: normal;
+
+  font-size: 18px;
+  line-height: 22px;
+  /* identical to box height, or 122% */
+
+  text-align: right;
+}
+
+.header__email {
+  font-weight: 500;
+  color: #ffffff;
+  margin: 0;
+  margin-right: 24px;
+  font-family: "Inter", Helvetica, Arial, sans-serif;
+  font-style: normal;
+
+  font-size: 18px;
+  line-height: 22px;
+}
+
+.header__link {
+  font-family: "Inter", Helvetica, Arial, sans-serif;
+  font-style: normal;
+
+  font-size: 18px;
+  line-height: 22px;
+  font-weight: normal;
+  /* identical to box height, or 122% */
+
+  /* text-align: right; */
+
+  color: #fff;
+  text-decoration: none;
+}
+.header__link_logged-in {
+  color: #a9a9a9;
 }

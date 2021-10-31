@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Switch } from 'react-router-dom';
+import { Route, Switch, Redirect, useHistory } from 'react-router-dom';
 import Header from './Header';
 import Main from './Main';
 import Footer from './Footer';
@@ -12,8 +12,19 @@ import EditAvatarPopup from './EditAvatarPopup';
 import AddPlacePopup from './AddPlacePopup';
 import Register from './Register';
 import Login from './Login';
+import InfoTooltip from './InfoTooltip';
+import ProtectedRoute from './ProtectedRoute';
+import * as auth from '../utils/auth';
 
 function App() {
+  // eslint-disable-next-line no-unused-vars
+  const [loggedIn, setLoggedIn] = React.useState(false);
+  const [tooltipData, setTooltipData] = React.useState({
+    status: false,
+    title: '',
+  });
+  const history = useHistory();
+
   const [currentUser, setCurrentUser] = React.useState({
     name: '',
     about: '',
@@ -27,6 +38,7 @@ function App() {
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = React.useState(false);
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] =
     React.useState(false);
+  const [isTooltipOpen, setIsTooltipOpen] = React.useState(false);
   const [selectedCard, setSelectedCard] = React.useState(null);
 
   React.useEffect(() => {
@@ -61,6 +73,7 @@ function App() {
     setIsAddPlacePopupOpen(false);
     setIsEditAvatarPopupOpen(false);
     setSelectedCard(null);
+    setIsTooltipOpen(false);
   };
 
   //* User
@@ -134,20 +147,39 @@ function App() {
       });
   };
 
+  const handleRegister = (email, password) => {
+    auth
+      .register(email, password)
+      .then((response) => {
+        history.push('/sign-in');
+        console.log(response);
+        setTooltipData({
+          status: true,
+          title: 'Вы успешно зарегистрировались!',
+        });
+        setIsTooltipOpen(true);
+      })
+      .catch((response) => {
+        console.log(response);
+        setTooltipData({
+          status: false,
+          title: 'Что-то пошло не так! Попробуйте ещё раз.',
+        });
+        setIsTooltipOpen(true);
+      });
+  };
+
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <div className="page__container">
         <Header />
 
         <Switch>
-          <Route path="/sign-up">
-            <Register />
-          </Route>
-          <Route path="/sign-in">
-            <Login />
-          </Route>
-
-          <Main
+          <ProtectedRoute
+            exact
+            path="/"
+            loggedIn={loggedIn}
+            component={Main}
             onEditProfile={handleEditProfileClick}
             onAddPlace={handleAddPlaceClick}
             onEditAvatar={handleEditAvatarClick}
@@ -156,7 +188,20 @@ function App() {
             onCardDelete={handleCardDelete}
             cards={cards}
           />
+
+          <Route path="/sign-up">
+            <Register handleRegister={handleRegister} />
+          </Route>
+
+          <Route path="/sign-in">
+            <Login />
+          </Route>
+
+          <Route path="/">
+            {loggedIn ? <Redirect to="/" /> : <Redirect to="/sign-in" />}
+          </Route>
         </Switch>
+
         <Footer />
 
         <EditProfilePopup
@@ -185,6 +230,14 @@ function App() {
         ></PopupWithForm>
 
         <ImagePopup card={selectedCard} onClose={closeAllPopups} />
+
+        <InfoTooltip
+          name="tooltip"
+          isOpen={isTooltipOpen}
+          onClose={closeAllPopups}
+          status={tooltipData.status}
+          title={tooltipData.title}
+        />
       </div>
     </CurrentUserContext.Provider>
   );
