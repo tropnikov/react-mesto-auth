@@ -1,7 +1,7 @@
 import logo from '../images/logo.svg';
 import { Route, Switch, Link } from 'react-router-dom';
 
-function Header() {
+function Header(props) {
   return (
     <header className="header page__section">
       <img
@@ -13,9 +13,10 @@ function Header() {
       <Switch>
         <Route exact path="/">
           <div className="header__user">
-            <p className="header__email">Email</p>
+            <p className="header__email">{props.email}</p>
             <Link
               to="/sign-in"
+              onClick={props.handleLogout}
               className="header__link header__link_logged-in button hover"
             >
               Выйти

@@ -17,12 +17,13 @@ import ProtectedRoute from './ProtectedRoute';
 import * as auth from '../utils/auth';
 
 function App() {
-  // eslint-disable-next-line no-unused-vars
   const [loggedIn, setLoggedIn] = React.useState(false);
   const [tooltipData, setTooltipData] = React.useState({
     status: false,
     title: '',
   });
+
+  const [userEmail, setUserEmail] = React.useState();
   const history = useHistory();
 
   const [currentUser, setCurrentUser] = React.useState({
@@ -51,6 +52,31 @@ function App() {
         console.log(err);
       });
   }, []);
+
+  React.useEffect(() => {
+    tokenCheck();
+  }, []);
+
+  React.useEffect(() => {
+    loggedIn && history.push('/');
+  }, [loggedIn]);
+
+  const tokenCheck = () => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      auth
+        .checkTokenValidity(token)
+        .then((response) => {
+          if (response) {
+            setUserEmail(response.data.email);
+            setLoggedIn(true);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  };
 
   const handleCardClick = (card) => {
     setSelectedCard(card);
@@ -147,20 +173,20 @@ function App() {
       });
   };
 
+  // * Auth
+
   const handleRegister = (email, password) => {
     auth
       .register(email, password)
-      .then((response) => {
+      .then(() => {
         history.push('/sign-in');
-        console.log(response);
         setTooltipData({
           status: true,
           title: 'Вы успешно зарегистрировались!',
         });
         setIsTooltipOpen(true);
       })
-      .catch((response) => {
-        console.log(response);
+      .catch(() => {
         setTooltipData({
           status: false,
           title: 'Что-то пошло не так! Попробуйте ещё раз.',
@@ -169,10 +195,32 @@ function App() {
       });
   };
 
+  const handleLogin = (email, password) => {
+    auth
+      .login(email, password)
+      .then((response) => {
+        if (response.token) {
+          localStorage.setItem('token', response.token);
+          setUserEmail(email);
+          setLoggedIn(true);
+          history.push('/');
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    setUserEmail('');
+    setLoggedIn(false);
+  };
+
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <div className="page__container">
-        <Header />
+        <Header email={userEmail} handleLogout={handleLogout} />
 
         <Switch>
           <ProtectedRoute
@@ -194,7 +242,7 @@ function App() {
           </Route>
 
           <Route path="/sign-in">
-            <Login />
+            <Login handleLogin={handleLogin} />
           </Route>
 
           <Route path="/">
