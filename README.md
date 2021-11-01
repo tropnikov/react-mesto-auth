@@ -23,7 +23,7 @@
 
 ## Посмотреть
 
-Ссылка на Pages: https://github.com/tropnikov/react-mesto-auth
+Ссылка на Pages: https://tropnikov.github.io/react-mesto-auth
 
 ### Локальное демо
 - Клонировать репозиторий `git clone git@github.com:tropnikov/react-mesto-auth.git`

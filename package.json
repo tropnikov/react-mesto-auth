@@ -1,6 +1,6 @@
 {
-  "homepage": "https://tropnikov.github.io",
-  "name": "mesto-react",
+  "homepage": "https://tropnikov.github.io/react-mesto-auth",
+  "name": "mesto-react-auth",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
