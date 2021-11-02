@@ -1,7 +1,12 @@
 import React from 'react';
 import PopupWithForm from './PopupWithForm';
 
-function EditAvatarPopup({ onClose, isOpen, onUpdateAvatar }) {
+function EditAvatarPopup({
+  onClose,
+  isOpen,
+  onUpdateAvatar,
+  closeByOverlayClick,
+}) {
   const avatarRef = React.useRef('');
 
   const handleSubmit = (evt) => {
@@ -18,6 +23,7 @@ function EditAvatarPopup({ onClose, isOpen, onUpdateAvatar }) {
 
   return (
     <PopupWithForm
+      closeByOverlayClick={closeByOverlayClick}
       onClose={onClose}
       isOpen={isOpen}
       name="avatar-update"

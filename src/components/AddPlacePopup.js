@@ -1,7 +1,7 @@
 import React from 'react';
 import PopupWithForm from './PopupWithForm';
 
-function AddPlacePopup({ onClose, isOpen, onAddPlace }) {
+function AddPlacePopup({ onClose, isOpen, onAddPlace, closeByOverlayClick }) {
   const [placeName, setPlaceName] = React.useState('');
   const [placeLink, setPlaceLink] = React.useState('');
 
@@ -24,6 +24,7 @@ function AddPlacePopup({ onClose, isOpen, onAddPlace }) {
 
   return (
     <PopupWithForm
+      closeByOverlayClick={closeByOverlayClick}
       onClose={onClose}
       isOpen={isOpen}
       name="place-add"

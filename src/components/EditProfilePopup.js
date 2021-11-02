@@ -2,7 +2,12 @@ import React from 'react';
 import PopupWithForm from './PopupWithForm';
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
 
-function EditProfilePopup({ isOpen, onClose, onUpdateUser }) {
+function EditProfilePopup({
+  isOpen,
+  onClose,
+  onUpdateUser,
+  closeByOverlayClick,
+}) {
   // Подписка на контекст
   const currentUser = React.useContext(CurrentUserContext);
 
@@ -37,6 +42,7 @@ function EditProfilePopup({ isOpen, onClose, onUpdateUser }) {
 
   return (
     <PopupWithForm
+      closeByOverlayClick={closeByOverlayClick}
       onClose={onClose}
       isOpen={isOpen}
       name="profile-edit"

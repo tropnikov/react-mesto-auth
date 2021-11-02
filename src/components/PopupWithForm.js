@@ -1,6 +1,7 @@
 function PopupWithForm(props) {
   return (
     <div
+      onClick={props.closeByOverlayClick}
       className={
         props.isOpen
           ? `popup popup_type_${props.name} popup_opened`
@@ -25,7 +26,6 @@ function PopupWithForm(props) {
           action="#"
           className={`form popup__form form_type_${props.name}`}
           name={`${props.name}-form`}
-          noValidate
         >
           {props.children}
           <button

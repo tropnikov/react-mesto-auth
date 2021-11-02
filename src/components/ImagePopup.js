@@ -1,6 +1,7 @@
 function ImagePopup(props) {
   return (
     <div
+      onClick={props.closeByOverlayClick}
       className={
         props.card
           ? `popup popup_photo place-full-photo popup_opened`

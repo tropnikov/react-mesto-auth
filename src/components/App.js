@@ -17,12 +17,12 @@ import ProtectedRoute from './ProtectedRoute';
 import * as auth from '../utils/auth';
 
 function App() {
+  // * auth states
   const [loggedIn, setLoggedIn] = React.useState(false);
   const [tooltipData, setTooltipData] = React.useState({
     status: false,
     title: '',
   });
-
   const [userEmail, setUserEmail] = React.useState();
   const history = useHistory();
 
@@ -34,6 +34,7 @@ function App() {
 
   const [cards, setCards] = React.useState([]);
 
+  // * popups states
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] =
     React.useState(false);
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = React.useState(false);
@@ -41,6 +42,8 @@ function App() {
     React.useState(false);
   const [isTooltipOpen, setIsTooltipOpen] = React.useState(false);
   const [selectedCard, setSelectedCard] = React.useState(null);
+
+  // * mounting
 
   React.useEffect(() => {
     Promise.all([api.getUserData(), api.getInitialCards()])
@@ -61,22 +64,19 @@ function App() {
     loggedIn && history.push('/');
   }, [loggedIn]);
 
-  const tokenCheck = () => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      auth
-        .checkTokenValidity(token)
-        .then((response) => {
-          if (response) {
-            setUserEmail(response.data.email);
-            setLoggedIn(true);
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
-  };
+  React.useEffect(() => {
+    const closeByEscape = (evt) => {
+      if (evt.key === 'Escape') {
+        closeAllPopups();
+      }
+    };
+
+    document.addEventListener('keydown', closeByEscape);
+
+    return () => document.removeEventListener('keydown', closeByEscape);
+  }, []);
+
+  // * popups handlers
 
   const handleCardClick = (card) => {
     setSelectedCard(card);
@@ -100,6 +100,12 @@ function App() {
     setIsEditAvatarPopupOpen(false);
     setSelectedCard(null);
     setIsTooltipOpen(false);
+  };
+
+  const closeByOverlayClick = (evt) => {
+    if (evt.target === evt.currentTarget) {
+      closeAllPopups();
+    }
   };
 
   //* User
@@ -131,10 +137,8 @@ function App() {
   //* Cards
 
   const handleCardLike = (card) => {
-    // Снова проверяем, есть ли уже лайк на этой карточке
     const isLiked = card.likes.some((i) => i._id === currentUser._id);
 
-    // Отправляем запрос в API и получаем обновлённые данные карточки
     api
       .changeLikeCardStatus(card._id, !isLiked)
       .then((newCard) => {
@@ -175,6 +179,23 @@ function App() {
 
   // * Auth
 
+  const tokenCheck = () => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      auth
+        .checkTokenValidity(token)
+        .then((response) => {
+          if (response) {
+            setUserEmail(response.data.email);
+            setLoggedIn(true);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  };
+
   const handleRegister = (email, password) => {
     auth
       .register(email, password)
@@ -184,13 +205,14 @@ function App() {
           status: true,
           title: 'Вы успешно зарегистрировались!',
         });
-        setIsTooltipOpen(true);
       })
       .catch(() => {
         setTooltipData({
           status: false,
           title: 'Что-то пошло не так! Попробуйте ещё раз.',
         });
+      })
+      .finally(() => {
         setIsTooltipOpen(true);
       });
   };
@@ -253,33 +275,42 @@ function App() {
         <Footer />
 
         <EditProfilePopup
+          closeByOverlayClick={closeByOverlayClick}
           onClose={closeAllPopups}
           isOpen={isEditProfilePopupOpen}
           onUpdateUser={handleUpdateUser}
         />
 
         <EditAvatarPopup
+          closeByOverlayClick={closeByOverlayClick}
           isOpen={isEditAvatarPopupOpen}
           onClose={closeAllPopups}
           onUpdateAvatar={handleUpdateAvatar}
         />
 
         <AddPlacePopup
+          closeByOverlayClick={closeByOverlayClick}
           isOpen={isAddPlacePopupOpen}
           onClose={closeAllPopups}
           onAddPlace={handleAddPlaceSubmit}
         />
 
         <PopupWithForm
+          closeByOverlayClick={closeByOverlayClick}
           onClose={closeAllPopups}
           name="confirmation"
           title="Вы уверены?"
           submitButtonText="Да"
         ></PopupWithForm>
 
-        <ImagePopup card={selectedCard} onClose={closeAllPopups} />
+        <ImagePopup
+          closeByOverlayClick={closeByOverlayClick}
+          card={selectedCard}
+          onClose={closeAllPopups}
+        />
 
         <InfoTooltip
+          closeByOverlayClick={closeByOverlayClick}
           name="tooltip"
           isOpen={isTooltipOpen}
           onClose={closeAllPopups}

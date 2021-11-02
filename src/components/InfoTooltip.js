@@ -4,6 +4,7 @@ import Err from '../images/reg-error.svg';
 const InfoTooltip = (props) => {
   return (
     <div
+      onClick={props.closeByOverlayClick}
       className={
         props.isOpen
           ? `popup popup_type_${props.name} popup_opened`
